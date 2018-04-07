@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Contribution Explorer</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="glossymenustyle.css" rel="stylesheet" type="text/css" />
+
+    <!-- TODO: Upgrade to more recent versions -->
+    <!--     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> 
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js" integrity="sha256-j2LsvgOlQFIb2Mphb+tX7d5pNmFdpsJU+s5GNo3z63g=" crossorigin="anonymous"></script>
+    -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
+    <link href="https://stackpath.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet" integrity="sha384-br15D1xki2uxso2Jd5k/aDmd7daYX3Ur17nGlEj4cSCYVaurBnBDfUXA+uKk7hUG" crossorigin="anonymous">
+    
+    <script src="https://stackpath.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js" integrity="sha384-e0kRLAUzZF/GpUULwXoniNHgUSfqSx0Xg5mdnYeD4W3PGOPxsX8j6pPeCGxWp0Ul" crossorigin="anonymous"></script>
+    
+    <script type="text/javascript" src="jquery.qtip-1.0.0-rc3.min.js"></script>
+    <script src="http://d3js.org/d3.v2.js"></script>
+
+    <script type="text/javascript" src="functions.js"></script>
+    <script type="text/javascript" src="data.js"></script>
+</head>
+<body onload="checkSearch()">
+    <div class="credits"> <!-- Moved by CSS to the bottom -->
+        <p>By Adam Raudonis - Lorenzo Mangubat - Gabriel Vincent Kho - Chris Fontas</p>
+    </div>
+
+    <form class="searchform">
+        <input class="searchfield" id="search" type="text" value="Search..." onchange = "checkSearch()" onfocus="if (this.value == 'Search...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Search...';}" />
+
+        <button type="button" id="zippopover" class="btn btn-small" data-placement="bottom" data-html="true" rel="popover" title="Enter Your Zip Code" data-content="<input id=&quot;zip&quot; class=&quot;searchfield&quot; type=&quot;text&quot; value=&quot;&quot; onfocus=&quot;if (this.value == '...') {this.value = '';}&quot; onblur=&quot;if (this.value == '') {this.value = 'Search...';}&quot; /> <button type=&quot;button&quot; class=&quot;btn btn-small btn-primary&quot; id=&quot;zipbutton&quot;>Submit</button>">Find My Rep.</button>
+
+        <div class="btn-group" data-toggle="buttons-radio" id="typeButtonGroup">
+            <button type="button" class="btn btn-small" id="pres">President</button>
+            <button type="button" class="btn btn-small" id="senate">Senate</button>
+            <button type="button" class="btn btn-small" id="house">House</button>
+
+        </div>
+            <button type="button" class="btn btn-small" id="reset" onClick="ResetDisplay()">Reset</button>
+    </form>
+
+    <!-- The list of all the congressional committees. Display none hides it. style="display: none;"-->
+    <div class="glossymenu" id="glossyid" style="display: none;"></div>
+
+    <script type="text/javascript">
+        var oldValue = document.getElementById('search').value;
+        var currentView = null;
+        
+        $(document).ready(function(){
+            $("#search").keyup(function(){
+                
+                // Retrieve the input field text and reset the count to zero
+                var search = $(this).val();
+                $("#selection_list").empty()
+                search.toLowerCase()
+                search_data(search);
+            });
+
+            $("#search").click(function(){
+                
+                return false;
+            });
+        });
+
+       $(function() {
+            var names = getNames();
+
+            var thing = $( "#search" ).autocomplete({
+                width: 320,
+                source: names,
+                messages: {
+                    noResults: "",
+                    results: function() {}
+                },  
+                select: function( event, ui ) {
+                    event.preventDefault();
+                }
+            });
+
+            $('#search').keypress(function(e){
+                if ( e.which == 13 ) return false;
+    
+                if ( e.which == 13 ) e.preventDefault();
+            });
+
+            var renderItem = thing.data("autocomplete")._renderItem;
+            /* Override the _renderItem function to display the placeholder item */
+            thing.data("autocomplete")._renderItem = function(ul, item) {
+                return $("<li class=\"ui-menu-item\"></li>")
+                    .data("ui-menu-item", item)
+                    .append("<a>" + item.value + "</a>")
+                    .appendTo(ul);
+
+            };
+
+
+        });
+
+        function checkSearch() {
+
+            
+            var searchBar = document.getElementById('search');
+            var searchTerm = document.getElementById('search').value;
+            if (searchTerm.length == 0 || searchTerm == "Search...") {
+
+            }
+            else {
+                console.log("The search term " + searchTerm)
+                search_data(searchTerm);
+            }
+        }
+        $(document).ready(function() {
+            $('a.ui-corner-all').click(function(e) {
+                e.preventDefault();
+            });
+        });
+
+
+        function OnSubtreeModified () {
+            var searchTerm = document.getElementById('search').value;
+            if (searchTerm.length > 0) {
+                console.log("The search term " + searchTerm)
+                search_data(searchTerm);
+            }
+        }
+        document.getElementById('search').addEventListener(Event.CHANGE, checkSearch, false);
+
+        setInterval(function(){
+            var searchBar = document.getElementById('search');
+            var searchTerm = document.getElementById('search').value;
+            if ((searchTerm.length > 0 && oldValue != searchTerm )|| search.valueOf() === "Search..."){
+                var anchors = document.getElementsByTagName('a')
+                for ( var i = 0; i < anchors.length + anchors.length; i++ ) {
+                    var anchor = ( i < anchors.length ) ? anchors[i] : anchors[i-anchors.length];
+                    anchor.addEventListener("click", OnSubtreeModified, false);
+                }
+                
+                console.log("The search term " + searchTerm)
+                oldValue = searchTerm;
+                search_data(searchTerm);
+            }
+        }, 100);
+        
+        $(function() {
+
+          // Select Presidents view initially.
+          $('#pres').button('toggle');
+          currentView = "pres";
+          // Get the selected button in the button group when pressed.
+          
+                
+          $ref = $(".btn-group");
+          $("body").on('click',$ref.selector+' .btn',function() {
+               if(!$(this).hasClass('active')){
+                    // Remove the SVG and initialize with different data
+                    // Note: This is move any html under the visualization to the top.
+                    d3.select("svg").remove();
+                    var svg = d3.select("body").append("svg")
+                    .attr("id","canvas").attr("width",1100).attr("height",900);
+                    currentView = $(this).attr("id");
+                    initializeVizAndMenu($(this).attr("id"));
+               }
+            });
+
+            // Create the visualization with the president data
+            initializeVizAndMenu("pres");
+        })
+
+        // Popover code ------------------------
+
+        // Close the popover by tapping anywhere
+        // http://stackoverflow.com/questions/8947749/
+        var isVisible = false;
+        var clickedAway = false;
+
+        $('#zippopover').popover({
+                html: true,
+                trigger: 'manual'
+            }).click(function(e) {
+                $(this).popover('show');
+                $('#zip').focus();
+                clickedAway = false
+                isVisible = true
+                e.preventDefault()
+            });
+
+        // Must be placed here. Can't be inside the document click function.
+        function whoisrep_callback(jsonData){
+            if (jsonData.response.legislators.length > 0) {
+
+                // TODO handle multiple reps per zip code.
+                // if (jsonData.response.legislators.length > 3) {
+                //     alert("Multiple reps found for that zip code. Try entering your full zip such as 91361-2038");
+                // };
+
+                // Special case for the district that stanford is in because
+                // the current rep lost and we are showing future reps.
+                var crpid = jsonData.response.legislators[0].legislator.crp_id;
+                if (crpid == "N00007364") {
+                    crpid = "N00029649";
+                };
+               // N00029649 - new
+               // N00007364 - old
+                // Switch to Rep. View if not in it already
+                if(!$('#house').hasClass('active')) {
+                    $('#house').button('toggle');
+                    d3.select("svg").remove();
+                    var svg = d3.select("body").append("svg")
+                        .attr("id","canvas").attr("width",1100).attr("height",900);
+                    whois_reps_toselect.push(crpid);
+                    initializeVizAndMenu("house");
+                } else {
+                    var oneArray = new Array();
+                    oneArray.push(crpid);
+                    select_cand_ids(oneArray);
+                }
+            } else {
+                alert("A representative for that zipcode could not be found. Try ex: 91361");
+            };
+        }
+
+        // For closing the popover and clicking submit
+        $(document).click(function(e) {
+
+            // If you press the submit button
+            if (e.target.id == "zipbutton") {
+
+                $(document).ready(function(){
+                    $.ajax({
+                        type: 'get',
+                        url: 'http://services.sunlightlabs.com/api/legislators.allForZip?apikey=de9c6b058ea542a4a5aab1d845d56c83&zip='+ $('#zip').val() +'&jsonp=whoisrep_callback',
+                        dataType: 'jsonp',
+                        success: whoisrep_callback 
+                    });
+                })
+            }
+
+            // Don't close if you are touching the zip textfield
+            if (e.target.id != "zip") {
+
+                //console.log(e.target);
+
+                var clickedClass = e.target.getAttribute("class");
+                                             console.log(clickedClass)
+
+                if (clickedClass != "candidate cand_unlocked" && clickedClass != "subcl" && clickedClass != "menuitem" && clickedClass != "sector_bar" &&  clickedClass != "test") {
+                    $("#search").attr("value", "");
+                    console.log("IN SELECTION");
+                    select_all_cand();
+                };
+
+
+                if(isVisible & clickedAway) {
+                    $('#zippopover').popover('hide')
+                    isVisible = clickedAway = false
+                }
+                else {
+                    clickedAway = true
+                }
+            };
+        });
+
+        function initializeVizAndMenu(raceType) {
+
+            $("#selection_list").empty();
+
+            initialize(raceType);
+
+            // Remove all children of the glossy menu generated div
+            $('#glossyid').children().remove()
+
+            if (raceType == "pres") {
+                $("#glossyid").css("display","none");
+            } else {
+                $("#glossyid").css("display","block");
+            }
+
+            generateCommitteeHTML(raceType);
+        }
+        
+        function ResetDisplay() {
+
+            var raceTypeVar = "pres";
+            if($('#house').hasClass('active')) {
+                raceTypeVar = "house";
+            } else if($('#senate').hasClass('active')) {
+                raceTypeVar = "senate";
+            } else {
+                raceTypeVar = "pres";
+            }
+
+
+            d3.select("svg").remove();
+            var svg = d3.select("body").append("svg").attr("id","canvas").attr("width",1100).attr("height",900);
+            initializeVizAndMenu(raceTypeVar);
+        }
+
+    </script>
+
+    <svg id="canvas" xmlns="http://www.w3.org/2000/svg"></svg> 
+    <div id="meta">
+        <div>mouse x: <span id="mouse_x"></span></div>
+        <div>mouse y: <span id="mouse_y"></span></div>
+        <div>theta: <span id="theta"></span></div>
+        <div>mouse r: <span id="mouse_r"></span></div>
+        <div>target: <span id="target"></span></div>
+        <div>select point 1 x: <span class="selection_data" id="select_point_1_x"></span></div>
+        <div>select point 1 y: <span class="selection_data" id="select_point_1_y"></span></div>
+        <div>select status<span id="select_status">false</span></div>
+    </div>
+    </div>
+        <div id="selection_list">
+            </select>
+        </div> 
+
+    <script type="text/javascript" src="ddaccordion.js"></script>
+    <script type="text/javascript" src="senate_committees.js"></script>
+    <script type="text/javascript" src="house_committees.js"></script>
+    <script type="text/javascript">
+
+        /***********************************************
+        * Accordion Content script- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
+        * Visit http://www.dynamicDrive.com for hundreds of DHTML scripts
+        * This notice must stay intact for legal use
+        ***********************************************/
+
+        // Callback for tapping the menu committees
+        function getCom(committee_id) {
+            $("#selection_list").empty();
+
+            $.ajax({
+                type: 'get',
+                url: 'http://services.sunlightlabs.com/api/committees.get.json?apikey=de9c6b058ea542a4a5aab1d845d56c83&id=' + committee_id + '&jsonp=comdetails_callback',
+                dataType: 'jsonp',
+                success: comdetails_callback 
+            });
+        }
+
+        function comdetails_callback(jsonData) {
+
+            var cidArray = new Array();
+            var members = jsonData.response.committee.members;
+
+            for (var i = 0; i < members.length; i++) {
+                var legislator = members[i].legislator;
+                cidArray.push(legislator.crp_id);
+            };
+            select_cand_ids(cidArray);
+        }
+
+    function generateCommitteeHTML(raceType) {
+
+        var obj;
+        if (raceType == "senate") {
+            obj = get_senate_list();
+        } else {
+            obj = get_house_list();
+        }
+
+        obj = obj.response;
+           
+        for (f = 0; f < obj.committees.length; f++) {
+            var a = document.createElement ("a");
+            a.setAttribute("href",'javascript:getCom(\"'+obj.committees[f].committee.id+'\")');
+            a.setAttribute("id",obj.committees[f].committee.id);
+            var committeename = obj.committees[f].committee.name;
+            var firstsubstring = committeename.substring(0,19)
+            if (raceType == "senate") {
+                if (firstsubstring == "Senate Committee on") {
+                    committeename = committeename.substring(20)
+                } else if (firstsubstring == "Senate Select Commi") {
+                    committeename = committeename.substring(27)
+                } else if (firstsubstring == "Senate Special Comm") {
+                    committeename = committeename.substring(27)
+                } else if (firstsubstring == "Senate Commission on") {
+                    committeename = committeename.substring(21)
+                }
+            } else {
+                if (firstsubstring == "House Committee on ") {
+                    committeename = committeename.substring(19)
+                } else if (firstsubstring == "House Permanent Sel") {
+                    committeename = committeename.substring(35)
+                }
+            }
+            
+            committeename = committeename.substring(0,38)
+
+            a.appendChild (document.createTextNode (committeename));
+
+            if (obj.committees[f].committee.subcommittees) {
+                a.setAttribute("class","menuitem submenuheader");
+                document.getElementsByClassName("glossymenu")[0].appendChild(a);
+
+
+                var subcommittees = obj.committees[f].committee.subcommittees;
+                var div = document.createElement ("div");
+                div.setAttribute("class","submenu");
+                var ul = document.createElement("ul");
+                
+                for (var i = subcommittees.length - 1; i >= 0; i--) {
+                    var subcommittee = subcommittees[i];
+                    var sub_li = document.createElement ("li");
+                    var sub_a = document.createElement ("a");
+                    sub_a.setAttribute("href",'javascript:getCom(\"' + subcommittee.committee.id + '\")');
+                    sub_a.setAttribute("class","subcl");
+                    sub_a.appendChild (document.createTextNode (subcommittee.committee.name));
+                    sub_li.appendChild(sub_a);
+                    ul.appendChild(sub_li);
+                }
+                div.appendChild(ul);
+                document.getElementsByClassName("glossymenu")[0].appendChild(div);
+            } else {
+                a.setAttribute("class","menuitem");
+                document.getElementsByClassName("glossymenu")[0].appendChild(a);
+            }
+        }
+
+        
+        // NOTE: I did this fricken crazy generation because
+        // the ddaccordion does not work in a function and if you
+        // just have it outside when you clear the div because you are
+        // switching senate/house the + signs disappear.
+        var headID = document.getElementsByTagName("head")[0];         
+        var newScript = document.createElement('script');
+        newScript.type = 'text/javascript';
+        newScript.src = 'accordianinit.js';
+        headID.appendChild(newScript);
+    }
+    </script>
+
+    <!-- For an unknown reason this needs to be here to make the popover work -->
+    <script src="js/bootstrap.min.js"></script> 
+</body>
+</html>
