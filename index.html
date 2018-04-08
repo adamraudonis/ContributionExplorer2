@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Contribution Explorer</title>
+
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link href="glossymenustyle.css" rel="stylesheet" type="text/css" />
+
+  <!-- TODO: Upgrade to more recent versions -->
+  <!--  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js" integrity="sha256-j2LsvgOlQFIb2Mphb+tX7d5pNmFdpsJU+s5GNo3z63g=" crossorigin="anonymous"></script>
+  -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
+  <link href="https://stackpath.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet" integrity="sha384-br15D1xki2uxso2Jd5k/aDmd7daYX3Ur17nGlEj4cSCYVaurBnBDfUXA+uKk7hUG" crossorigin="anonymous">
+  
+  <script src="https://stackpath.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js" integrity="sha384-e0kRLAUzZF/GpUULwXoniNHgUSfqSx0Xg5mdnYeD4W3PGOPxsX8j6pPeCGxWp0Ul" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript" src="jquery.qtip-1.0.0-rc3.min.js"></script>
+  <script src="http://d3js.org/d3.v2.js"></script>
+
+  <script type="text/javascript" src="functions.js"></script>
+  <script type="text/javascript" src="data/data.js"></script>
+</head>
+<body>
+  <div class="credits"> <!-- Moved by CSS to the bottom -->
+    <p>About (Share FB) (Share Twitter)</p>
+  </div>
+  <form class="searchform">
+    <input class="searchfield" id="search" type="text" value="Search..." onchange = "checkSearch()" onfocus="if (this.value == 'Search...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Search...';}" />
+
+    <div class="btn-group" data-toggle="buttons-radio" id="typeButtonGroup">
+      <button type="button" class="btn btn-small" id="house">House</button>
+      <button type="button" class="btn btn-small" id="senate">Senate</button>
+      <button type="button" class="btn btn-small" id="pres">President</button>
+    </div>
+    <button type="button" class="btn btn-small" id="reset" onClick="ResetDisplay()">Reset</button>
+  </form>
+  
+  <!-- The list of all the congressional committees. -->
+  <div class="glossymenu" id="glossyid"></div>
+  
+  <script type="text/javascript" src="search.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+
+  <svg id="canvas" xmlns="http://www.w3.org/2000/svg"></svg> 
+  
+  <div id="debug_info">
+    <div>mouse x: <span id="mouse_x"></span></div>
+    <div>mouse y: <span id="mouse_y"></span></div>
+    <div>theta: <span id="theta"></span></div>
+    <div>mouse r: <span id="mouse_r"></span></div>
+    <div>target: <span id="target"></span></div>
+    <div>select point 1 x: <span class="selection_data" id="select_point_1_x"></span></div>
+    <div>select point 1 y: <span class="selection_data" id="select_point_1_y"></span></div>
+    <div>select status<span id="select_status">false</span></div>
+  </div>
+
+  <div id="selection_list">
+    </select>
+  </div> 
+
+  <script type="text/javascript" src="ddaccordion.js"></script>
+  <script type="text/javascript" src="data/senate_committees.js"></script>
+  <script type="text/javascript" src="data/house_committees.js"></script>
+  <script type="text/javascript" src="side_bar.js"></script>
+
+  <!-- For an unknown reason this needs to be here to make the popover work -->
+  <!-- <script src="js/bootstrap.min.js"></script> -->
+</body>
+</html>

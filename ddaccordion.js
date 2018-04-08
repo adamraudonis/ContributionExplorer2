@@ -10,7 +10,7 @@
 
 
 var ddaccordion={
-	ajaxloadingmsg: '<img src="loading2.gif" /><br />Loading Content...', //customize HTML to output while Ajax content is being fetched (if applicable)
+	ajaxloadingmsg: '<img src="images/loading2.gif" /><br />Loading Content...', //customize HTML to output while Ajax content is being fetched (if applicable)
 
 	headergroup: {}, //object to store corresponding header group based on headerclass value
 	contentgroup: {}, //object to store corresponding content group based on headerclass value
@@ -157,10 +157,11 @@ var ddaccordion={
 	},
 
 	init:function(config){
-	document.write('<style type="text/css">\n')
-	document.write('.'+config.contentclass+'{display: none}\n') //generate CSS to hide contents
-	document.write('a.hiddenajaxlink{display: none}\n') //CSS class to hide ajax link
-	document.write('<\/style>')
+    // These lines caused a warning. Not sure what they do.
+	// document.write('<style type="text/css">\n')
+	// document.write('.'+config.contentclass+'{display: none}\n') //generate CSS to hide contents
+	// document.write('a.hiddenajaxlink{display: none}\n') //CSS class to hide ajax link
+	// document.write('<\/style>')
 	jQuery(document).ready(function($){
 		ddaccordion.urlparamselect(config.headerclass)
 		var persistedheaders=ddaccordion.getCookie(config.headerclass)

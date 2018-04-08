@@ -9,7 +9,7 @@ border-bottom-width: 0;
 }
 
 .glossymenu a.menuitem{
-background: black url(glossyback.gif) repeat-x bottom left;
+background: black url('images/glossyback.gif') repeat-x bottom left;
 font: bold 14px "Lucida Grande", "Trebuchet MS", Verdana, Helvetica, sans-serif;
 color: white;
 display: block;
@@ -33,7 +33,7 @@ border: none;
 }
 
 .glossymenu a.menuitem:hover{
-background-image: url(glossyback2.gif);
+background-image: url('images/glossyback2.gif');
 }
 
 .glossymenu div.submenu{ /*DIV that contains each sub menu*/
