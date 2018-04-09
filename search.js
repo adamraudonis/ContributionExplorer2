@@ -86,32 +86,6 @@ setInterval(function() {
     search_data(searchTerm);
   }
 }, 100);
-  
-$(function() {
-  // Select House view initially.
-  $('#house').button('toggle');
-  currentView = "house";
-  // Get the selected button in the button group when pressed.
-  
-  $ref = $(".btn-group");
-  $("body").on('click',$ref.selector+' .btn',function() {
-    if(!$(this).hasClass('active')) {
-      // Remove the SVG and initialize with different data
-      // Note: This is move any html under the visualization to the top.
-      d3.select("svg").remove();
-      var svg = d3.select("body")
-                .append("svg")
-                .attr("id","canvas")
-                .attr("width",1100)
-                .attr("height",900);
-      currentView = $(this).attr("id");
-      initializeVizAndMenu($(this).attr("id"));
-    }
-  });
-  
-  // Create the visualization with the house data
-  initializeVizAndMenu("house");
-})
 
 // Popover code ------------------------
 

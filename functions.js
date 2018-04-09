@@ -19,8 +19,10 @@ var contributorList = "";
 
 var contributions = new Array();
 
-function jsonCallback(data) {
+var seed = 1;
 
+function initialize(congress, raceType) {
+  var data = get_data(congress, raceType)
   all_sectors = new Array();
   sector_count = 0;
   max_sector = 0;
@@ -339,42 +341,13 @@ function candCallBack(data){
   }
 }
 
-// function contributor(cid){
-//   //nameList = new Array();
-//   console.log('http://www.stanford.edu/~gdykho/cgi-bin/candCallback'+cid+'.json&jsonp=candCallback')
-//   $(document).ready(function(){
-//       $.ajax({
-//           type: 'get',
-//           url: 'http://www.stanford.edu/~gdykho/cgi-bin/callback/'+cid+'.json&jsonp=candCallback',
-//           dataType: 'jsonp',
-//           success: candCallBack
-//       });
-//      }) 
-// }
-
-function initialize(filename) {
-
-  // The filename is the racetype: pres, senate, or house.
-  race_type = filename;
-  //nameList = new Array();
-  $(document).ready(function(){
-    // $.ajax({
-    //     type: 'get',
-    //     url: 'http://www.stanford.edu/~raudonis/'+filename+'.json&jsonp=jsonCallback',
-    //     dataType: 'jsonp',
-    //     success: jsonCallback
-    // });
-    jsonCallback(get_house_data())
-  }) 
-}
-
 // Returns a random integer between min and max
 // http://stackoverflow.com/questions/10134237/
 function getRandomInt (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function draw_candidates(candidate_id,  canvas, colors_assigned, redraw) {
+function draw_candidates(candidate_id, canvas, colors_assigned, redraw) {
  
   var candidate = d3.select("#" + candidate_id)
   
@@ -459,7 +432,7 @@ function draw_candidates(candidate_id,  canvas, colors_assigned, redraw) {
           .style("opacity",function() {
             return 1 + 0 * tension_fraction;
           })
-          .style("display",show_random_vectors())
+          .style("display",show_random_vectors(i))
         //}
       } else {
         $("#cand_" + candidate_id + "_vector_" + j).attr("d", d)
@@ -667,7 +640,7 @@ function finish_selection() {
         for (var sector in all_sectors) {
           var vector = $("#cand_" + id + "_vector_" + sector)
           
-          vector.css("display",show_random_vectors())
+          vector.css("display",show_random_vectors(i))
         }
       }
     } else {
@@ -912,7 +885,7 @@ function select_all_cand() {
         if (opacity_count > 400) {
 
         } else {
-          vector.css("display", show_random_vectors())
+          vector.css("display", show_random_vectors(i))
         }
       };
     };
@@ -924,19 +897,26 @@ function select_all_cand() {
   $(".candidate").css("stroke", "black")
 }
 
-function show_random_vectors() {
+function show_random_vectors(i) {
 
-  var randomInt = getRandomInt(0, 3);
-  if (randomInt == 1 || race_type != "house") {
-    return "block";
-  } else {
-    return "none";
-  }
+  // function random() {
+  //     var x = Math.sin(seed++) * 10000;
+  //     return x - Math.floor(x);
+  // }
+  //var randomInt = (Math.random()*100)
+
+  // console.log(random())
+
+  // console.log(i)
+  return "block"
+
+  // var randomInt = getRandomInt(0, 3);
+  // if (random() < 0.3 || race_type != "house") {
+  //   return "block";
+  // } else {
+  //   return "none";
+  // }
 }
-
-// function getNames() {
-//   return nameList
-// }
 
 function start_selection_rect() {
     
@@ -967,3 +947,27 @@ function start_selection_rect() {
   $("#select_point_1_x").html(mouse_x)
   $("#select_point_1_y").html(mouse_y)
 }
+
+// function initialize(congress, raceType) {
+
+//   // The filename is the racetype: pres, senate, or house.
+//   jsonCallback()
+// }
+
+
+// function contributor(cid){
+//   //nameList = new Array();
+//   console.log('http://www.stanford.edu/~gdykho/cgi-bin/candCallback'+cid+'.json&jsonp=candCallback')
+//   $(document).ready(function(){
+//       $.ajax({
+//           type: 'get',
+//           url: 'http://www.stanford.edu/~gdykho/cgi-bin/callback/'+cid+'.json&jsonp=candCallback',
+//           dataType: 'jsonp',
+//           success: candCallBack
+//       });
+//      }) 
+// }
+
+// function getNames() {
+//   return nameList
+// }

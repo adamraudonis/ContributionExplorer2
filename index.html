@@ -29,51 +29,58 @@
 
   <script type="text/javascript" src="functions.js"></script>
   <script type="text/javascript" src="data/data.js"></script>
-</head>
-<body>
-  <div class="credits"> <!-- Moved by CSS to the bottom -->
-    <p>About (Share FB) (Share Twitter)</p>
-  </div>
-  <form class="searchform">
-    <input class="searchfield" id="search" type="text" value="Search..." onchange = "checkSearch()" onfocus="if (this.value == 'Search...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Search...';}" />
 
-    <div class="btn-group" data-toggle="buttons-radio" id="typeButtonGroup">
-      <button type="button" class="btn btn-small" id="house">House</button>
-      <button type="button" class="btn btn-small" id="senate">Senate</button>
-      <button type="button" class="btn btn-small" id="pres">President</button>
-    </div>
-    <button type="button" class="btn btn-small" id="reset" onClick="ResetDisplay()">Reset</button>
-  </form>
-  
-  <!-- The list of all the congressional committees. -->
-  <div class="glossymenu" id="glossyid"></div>
-  
-  <script type="text/javascript" src="search.js"></script>
   <script type="text/javascript" src="main.js"></script>
-
-  <svg id="canvas" xmlns="http://www.w3.org/2000/svg"></svg> 
-  
-  <div id="debug_info">
-    <div>mouse x: <span id="mouse_x"></span></div>
-    <div>mouse y: <span id="mouse_y"></span></div>
-    <div>theta: <span id="theta"></span></div>
-    <div>mouse r: <span id="mouse_r"></span></div>
-    <div>target: <span id="target"></span></div>
-    <div>select point 1 x: <span class="selection_data" id="select_point_1_x"></span></div>
-    <div>select point 1 y: <span class="selection_data" id="select_point_1_y"></span></div>
-    <div>select status<span id="select_status">false</span></div>
-  </div>
-
-  <div id="selection_list">
-    </select>
-  </div> 
 
   <script type="text/javascript" src="ddaccordion.js"></script>
   <script type="text/javascript" src="data/senate_committees.js"></script>
   <script type="text/javascript" src="data/house_committees.js"></script>
   <script type="text/javascript" src="side_bar.js"></script>
 
-  <!-- For an unknown reason this needs to be here to make the popover work -->
-  <!-- <script src="js/bootstrap.min.js"></script> -->
+</head>
+<body>
+  <div class="credits"> <!-- Moved by CSS to the bottom -->
+    <p>About (Share FB) (Share Twitter)</p>
+  </div>
+    
+  <input class="searchfield" id="search" type="text" value="Search..." onchange = "checkSearch()" onfocus="if (this.value == 'Search...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Search...';}" />
+
+  <div class="btn-group" data-toggle="buttons-radio" id="raceTypeButtonGroup">
+    <button type="button" class="btn btn-small" id="house">House</button>
+    <button type="button" class="btn btn-small" id="senate">Senate</button>
+  </div>
+  
+  <button type="button" class="btn btn-small" id="reset" onClick="ResetDisplay()">Reset</button>
+
+  <div class="btn-group" data-toggle="buttons-radio" id="congressButtonGroup">
+    <button type="button" class="btn btn-small" id="112">2012</button>
+    <button type="button" class="btn btn-small" id="113">2014</button>
+    <button type="button" class="btn btn-small" id="114">2016</button>
+    <button type="button" class="btn btn-small" id="115">2018</button>
+  </div>
+
+  <!-- The list of all the congressional committees. -->
+  <div class="glossymenu" id="glossyid"></div>
+  
+  <svg id="canvas" xmlns="http://www.w3.org/2000/svg"></svg> 
+
+  <div id="selection_list">
+    </select>
+  </div> 
+
+  <!-- Hidden -->
+  <p id="debug_info">
+    mouse x: <span id="mouse_x"></span></br>
+    mouse y: <span id="mouse_y"></span></br>
+    theta: <span id="theta"></span></br>
+    mouse r: <span id="mouse_r"></span></br>
+    target: <span id="target"></span></br>
+    select point 1 x: <span class="selection_data" id="select_point_1_x"></span></br>
+    select point 1 y: <span class="selection_data" id="select_point_1_y"></span></br>
+    select status: <span id="select_status">false</span>
+  </p>
+
+  <!-- For whatever reason this must be here for search to work -->
+  <script type="text/javascript" src="search.js"></script>
 </body>
 </html>

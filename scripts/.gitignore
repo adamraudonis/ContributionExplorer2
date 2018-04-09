@@ -1,0 +1,6 @@
+*bin/
+*include/
+*lib/
+*.sqlite
+config.json
+pip-selfcheck.json
